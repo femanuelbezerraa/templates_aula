@@ -1,163 +1,165 @@
-from flask import Flask, rederer_template, request, redirect, url_for, session, g
+from flask import Flask, render_template, request, redirect, url_for, session, g
 from urllib.parse import quote_plus
+from functools import wraps
+from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
 import psycopg2.extras
-from werkzeug.security import generate_password_hash, check_password_hash
-from functools import wraps
+import os
 
-#configurar minha aplicaçção
+# Configuração da aplicação Flask
 app = Flask(__name__)
-app.sconfig['SECERET_KEY'] = 'sua_chave_aqui'#chave secreta para sessões
+app.config['SECRET_KEY'] = 'uma_chave_muito_secreta'
+# Configuração para postgreSQL
+DB_USER = 'postgres'
+DB_PASSWORD = 'geleira@1'
+DB_HOST = 'localhost'
+DB_NAME = 'py_estoque_3b'
+DB_PORT = '5433'
+# URL-encode a senha para garantir que caracteres especiais sejam tratados corretamente
+ENCODED_DB_PASSWORD = quote_plus(DB_PASSWORD)
 
-#CONFIGURAÇÃO DO BANCO DE DADOS
-DB_USER = 'postgres'#usuário do banco de dados
-DB_PASSWORD = 'wcc@2023'#senha do banco de dados
-DB_HOST = 'localhost'#endereço do banco de dados
-DB_NAME = 'py_estoque_3a' #nome do banco de dados
-DB_PORT = '5433' #porta padrão do PostgreSQL é 5432, mas pode variar
-#URL -encoded A SENHA PARA CARACTERES ESPECIAIS SEJAM ACEITOS
-ENCODED_DB_PASSWORD = quote_plus(DB_PASSWORD) #codificar a senha para caracteres especiais
-#STRING DE CONEXÃO
-app.config['DATABSE_URL'] = f"postgresql://{DB_USER}:{ENCODED_DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}" #URL DE CONEXÃO COM O BANCO DE DADOS
-#FUNÇÃO PARA CONECTAR AO BANCO DE DADOS
+app.config['DATABASE_URL'] = f"postgresql://{DB_USER}:{ENCODED_DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
 def get_db():
-    if 'db' not in g:#se não houver conexão com o banco de dados
-        g.db = psycopg2.conenect( #conectar ao banco de dados
-            user = DB_USER, #USUÁRIO DO BANCO DE DADOS
-            password = DB_PASSWORD, #SENHA DO BANCO DE DADOS
-            host = DB_HOST, #ENDEREÇO DO BANCO DE DADOS
-            port = DB_PORT, #PORTA DO BANCO DE DADOS
-            database = DB_NAME #NOME DO BANCO DE DADOS
+    if 'db' not in g:
+        g.db = psycopg2.connect(
+            user = DB_USER,
+            password = DB_PASSWORD,
+            host = DB_HOST,
+            port = DB_PORT,
+            dbname = DB_NAME
         )
-    return g.db #retornar a conexão com o banco de dados
+    return g.db
 
-@app.teardown_appcontext #GARANTIR QUE A FUNÇÃO SERÁ CHAMADA AO FINAL DE CADA REQUISIÇÃO
-#FECHAR A CONEXÃO COM O BANCO DE DADOS
-def close_db(e=None): #fechar a conexão com o banco de dados 
-    #o E é para capturar erros, se houver
-    db = g.pop('db'), None #remover a conexão do g
-    if db is not None:  #se houver uma conexão
-        db.close() #fechar a conexão
-# pesquisar sobre os parametros args e one
-def query_db(query, args=(), one=False): #função para executar consultas no banco de dados
-    db = get-db() #obter a conexão com o banco de dados
-    cur = db.cursor()  #criar um cursor
-    cur.execute(query, args)  #executar a consulta
-    db.commit() #confirmar a transação
-    rv = cur.fetchall() #obter todos os resultados da consulta
-    cur.close()  #fechar o cursor
-    # entender melhor o return da função - comente
-    return (rv[0] if rv else None) if one else rv #retornar um único registro ou todos os registros
+@app.teardown_appcontext
+def close_db(e=None):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
+        
+def query_db(query, args=(), one=False): # revisar para a função dos parâmetros
+    db = get_db()
+    cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.execute(query, args)
+    rv = cur.fetchall()
+    cur.close()
+    return (rv[0] if rv else None) if one else rv
 
 def execute_db(query, args=()):
-    db = get_db() #obter a conexão com o banco de dados
-    cur = db.cursor() #criar um cursor
-    cur.execute(query, args) #executar a consulta
-    db.commit() #confirmar a transação
-    #verificar se a consulta retornou um ID (útil para inserts com RETURNING
-    #Retornar o ID do último registro inserido, útil para o Serial
+    db = get_db()
+    cur = db.cursor()
+    cur.execute(query, args)
+    db.commit()
+    # Retorna o ID do último registro inserido, útil para o SERIAL
     if cur.description:
-        last_id = cur.fetchone()[0] #obter o ID do último registro inserido
+        last_id = cur.getchone()[0]
     else:
-        last_id = None #se não houver ID para retornar
-    cur.close() #fechar o cursor
-    return last_id #retornar o ID do último registro inserido
-# DECORADOR PARA PROTEGER ROTAS QUE EXIGEM AUTENTICAÇÃO
-def login_required(f): #decorador para proteger rotas   
-    @wraps(f) #manter as informações da função original
-    def decorated_function(*args, **kwargs): #manter o nome e a docstring da função original
-        if 'usuario_id' not in session: #verificar se o usuário está logado
-            return redirect(url_for('autenticacao')) #redirecionar para a página de login se o usuário não estiver logado
-        return f(*args, **kwargs) #chamar a função original
-    return decorated_function #retornar a função decorada
-#ROTAS DA APLICAÇÃO
-@app.route('/')#'Rota inicial
+        last_id = None
+    cur.close()
+    return last_id
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'usuario_id' not in session:
+            return redirect(url_for('autenticacao'))
+        return f(*args, **kwargs)
+    return decorated_function   
+
+@app.route('/')
 def home():
-    if 'usuario_id' in session: #verificar se o usuário está logado
-        return redirect(url_for('cadastro_produto')) #redirecionar para a página de cadastro de produto se o usuário estiver logado
-    return redirect(url_for('autenticacao')) #redirecionar para a página de login se o usuário não estiver logado
-#'Rota de autenticação
+    if 'usuario_id' in session:
+        return redirect(url_for('cadastro_produto'))
+    return redirect(url_for('autenticacao'))
+
 @app.route('/autenticacao', methods=['GET', 'POST'])
-def autentication():
-    if request.method == "POST":#processar o formulário de login
-        email = request.form['email'] #obter os dados do formulário
-        senha = request.form['senha'] #obter os dados do formulário
-        usuario = query.db(' SELECT * FROM usuarios WHERE email = %s', (email,), one=True)#verificar se o usuário existe
-        if usuario and check_password_hash(usuario['senha'], senha): #verificar a senha
-            session['usuario_id'] = usuario['id'] #armazenar o ID do usuário na sessão
-            session['usuario_nome'] = usuario['nome'] #armazenar o nome do usuário na sessão
-            return redirect(url_for('cadastro_produto')) #redirecionar para a página de cadastro de produto após o login bem-sucedido
+def autenticacao():
+    if request.method == 'POST':
+        email = request.form['email']
+        senha = request.form['senha']
+        usuario = query_db('SELECT * FROM usuarios WHERE email = %s', (email,), one=True)
+        if usuario and check_password_hash(usuario['senha'], senha):
+            session['usuario_id'] = usuario['id']
+            session['usuario_nome'] = usuario['nome']
+            return redirect(url_for('cadastro_produto'))
         else:
-            return render_template('autenticacao.html', erro="Email ou senha inválidos.") #exibir mensagem de erro se o login falhar
-    return render_template('autenticacao.html') #exibir o formulário de login
-#'Rota de cadastro de usuário
+            return render_template('autenticacao.html', erro='E-mail ou senha inválidos')
+    return render_template('autenticacao.html')
+
 @app.route('/cadastro_usuario', methods=['GET', 'POST'])
 def cadastro_usuario():
-    if request.method == 'POST':#processar o formulário de cadastro
-        nome = request.form['nome'] #obter os dados do formulário
-        email = request.form['email'] #obter os dados do formulário
-        senha = request.form['senha'] #obter os dados do formulário
+    if request.method == 'POST':
+        nome = request.form['nome']
+        email = request.form['email']
+        senha = request.form['senha']
         
-        usuario_existente = query_db('SELECT * FROM usuarios WHERE email = %s', (email,), one=True) #verificar se o email já está cadastrado
+        usuario_existente = query_db('SELECT id FROM usuarios WHERE email = %s', (email,), one=True)
+        
         if usuario_existente:
-            return render_template('cadastro_usuario.html', erro="Email já cadastrado.") #exibir mensagem de erro se o email já estiver cadastrado
+            return render_template('cadastro_usuario.html', erro='E-mail já cadastrado')
+        
+        senha_hash = generate_password_hash(senha, method='pbkf2:sha256')
+        execute_db('INSERT INTO usuarios (nome, email, senha) VALUES (%s, %s, %s)', (nome, email, senha_hash))
+        return redirect(url_for('autenticacao'))
+    return render_template('cadastro_usuario.html')
 
-        senha_hash = generate_password_hash(senha, method='pbkdf2:sha256')#criptografar a senha
-        execute_db('INSERT INTO usuarios (nome, email, senha) VALUES (%s, %s, %s)', (nome, email, senha_hash))#inserir o novo usuário no banco de dados
-        return redirect(url_for('autenticacao')) #redirecionar para a página de login após o cadastro
-    return render_template('cadastro_usuario.html') #após o cadastro, redirecionar para a página de login
-#'Rota de logout
 @app.route('/logout')
 def logout():
-    session.pop('usuario_id', None) #remover as informações do usuário da sessão
-    session.pop('usuario_nome', None) #remover o nome do usuário da sessão
-    return redirect(url_for('autenticacao')) #redirecionar para a página de login
-#'Rota de cadastro de produto
+    session.pop('usuario_id', None)
+    session.pop('usuario_nome', None)
+    return redirect(url_for('autenticacao'))
+
 @app.route('/cadastro_produto', methods=['GET', 'POST'])
-@login_required #proteger a rota
+@login_required
 def cadastro_produto():
-    if request.method == 'POST': #processar o formulário de cadastro de produto
-        nome = request.form['nome'] #nome do produto
-        descricao = request.form['descricao'] #descrição do produto
-        quantidade = int(request.form['quantidade']) #quantidade do produto
-        preco = float(request.form['preco']) #preço do produto
-        quantidade_minima = int(request.form['quantidade_minima']) #quantidade mínima para alerta de estoque
-
-        produto = query_db('SELECT * FROM produtos WHERE nome = %s', (nome,), one=True) #verificar se o produto já existe
-        if produto:
-            execute.db('UPDATE produtos SET quantidade = quantidade + %s, quantidade_minima = %s WHERE id = %s', (quantidade, quantidade_minima, produto['id'])) #atualizar a quantidade do produto existente
-            produto_id = produto['id'] #obter o ID do produto existente
-        else:
-            result = execute_db('INSERT INTO produtos (nome, descricao, quantidade, preco, quantidade_minima) VALUES (%s, %s, %s, %s, %s) RETURNING id RETURNING id',(nome, descricao, quantidade, preco, quantidade_minima)) #inserir o novo produto no banco de dados
-            produto_id = result #obter o ID do produto recém-inserido
-
-        execute_db ('INSERT INTO mocimentacao_estoque (produto_id, tipo movimentacao,quantidade, usuario_id) VALUES (%s,%s,%s,%s)', (produto_id, 'entrada', quantiadade, session['usuario_id'])) #registrar a movimentação de entrada no estoque
-
-        return redirect(url_for('lista_produtos'))  #redirecionar para a lista de produtos após o cadastro
-
-    #Ordenar por quantidade minima
-    produtos = query_db('SELECT * FROM produtos ORDER BY quantidade = quantidade_minims') #obter a lista de produtos do banco de dados
-    return render_template('cadastro_produto.html', produtos=produtos, usuario_nome=session['usuario_nome']) #passar o nome do usuário para o template
-
-@app.route('/saida_produto/<int:produto_id>', methods=['POST']) #Rota para registrar a saída de um produto
-@login_required #proteger a rota
-def saida_produto(produto_id):
-    produto = query_db('SELECT * FROM produtos WHERE id = %s', (produto_id,), one=True) #obter o produto do banco de dados
-    if not produto:
-        return "Produto não encontrado.", 404 #retornar erro se o produto não for encontrado
-
-    quantidade_saida = int(request.form['quantidade_saida']) #obter a quantidade de saída do formulário
-    if quantidade_saida > 0 and produto['quantidade'] >= quantidade_saida: #verificar se a quantidade de saída é válida
-        execute_db('UPDATE produtos SET quantidade = quantidade - %s WHERE id = %s', (quantidade_saida, produto_id)) #atualizar a quantidade do produto no banco de dados
-        execute_db('INSERT INTO movimentacao_estoque (produto_id, tipo_movimentacao, quantidade, usuario_id) VALUES (%s, %s, %s, %s)', (produto_id, 'saida', quantidade_saida, session['usuario_id'])) #registrar a movimentação de saída no estoque
+    if request.method == 'POST':
+        nome = request.form['nome']
+        descricao = request.form['descricao']
+        quantidade = int(request.form['quantidade'])
+        preco = float(request.form['preco'])
+        quantidade_minima = int(request.form['quantidade_minima'])
     
-    return redirect(url_for('cadastro_produto')) #redirecionar para a lista de produtos após registrar a saída
+        produto = query_db('SELECT * FROM produtos WHERE nome = %s', (nome,), one=True)
+    
+        if produto:
+            execute_db('UPDATE produtos SET quantidade = quantidade + %s, quantidade_minima = %s WHERE id = %s', 
+                   (quantidade, quantidade_minima, produto['id']))
+            produto_id = produto['id']
+        else:
+            # PostgreSQL retorna o ID na inserção, precisa do RETURNING
+            result = execute_db('INSERT INTO produtos (nome, descricao, quantidade, preco, quantidade_minima) VALUES (%s, %s, %s, %s, %s) RETURNING id', 
+                            (nome, descricao, quantidade, preco, quantidade_minima))
+            produto_id = result
+    
+        execute_db('INSERT INTO movimentacao_estoque (produto_id, tipo_movimentacao, quantidade, usuario_id) VALUES (%s, %s, %s, %s)',
+               (produto_id, 'entrada', quantidade, session['usuario_id']))
+        return redirect(url_for('cadastro_produto'))
+    
+    # Ordenar os produtos com base na proximidade da quantidade mínima
+    produtos = query_db('SELECT * FROM produtos ORDER BY quantidade - quantidade_minima')
+    return render_template('cadastro_produto.html', produtos=produtos, usuarios=usuario.get('usuario_nome'))
 
-@app.route('/estoque') #Rota para exibir o estoque
-@login_required #proteger a rota
+@app.route('/saida_produto/<int:produto_id>', methods=['POST'])
+@login_required
+def saida_produto(produto_id):
+    produto = query_db('SELECT * FROM produtos WHERE id = %s', (produto_id,), one=True)
+    if not produto:
+        return "Produto não encontrado", 404
+    
+    quantidade_saida = int(request.form['quantidade_saida'])
+    
+    if quantidade_saida > 0 and produto['quantidade']>= quantidade_saida:
+        execute_db('UPDATE produtos SET quantidade = quantidade - %s WHERE id = %s', (quantidade_saida, produto_id))
+        execute_db('INSERT INTO movimentacao_estoque (produto_id, tipo_movimentacao, quantidade, usuario_id) VALUES(%s, %s, %s, %s)', 
+                   (produto_id, 'saida', quantidade_saida, session['usuario_id']))
+    
+    return redirect(url_for('cadastro_produto'))
+
+@app.route('/estoque')
+@login_required
 def estoque():
-    movimenetacoes = query_db(' SELCT * FROM movimentacao_estoque AS m JOIN usuario AS u ON m.usuario_id = u.id ORDER BY m.date_movimentacao DESC') #obter a lista de movimentações do estoque do banco de dados
-    return render_template('estoque.html', movimentacoes=movimentacoes, usuario = session.get['usuario_nome']) #passar o nome do usuário para o template 
+    movimentacoes = query_db('SELECT * FORM movimentacao_estoque AS m JOIN usuarios AS u ON m.usario_id = u.id ORDER BY m.data_movimentacao DESC')
+    return render_template('estoque.html', movimentacoes=movimentacoes, usuario=session.get('usuario_nome'))
 
-if __name__ == '__main__': #verificar se o script está sendo executado diretamente
-    app.run(debug=True) #executar a aplicação em modo de depuração
+if __name__ == '__main__':
+    app.run(debug=True)
