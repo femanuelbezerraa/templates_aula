@@ -1,0 +1,98 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #002b53 0%, #536f9c 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container-produto {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 500px;
+    border: 2px solid transparent;
+    border-color: #e74c3c;
+}
+
+.titulo-principal {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.form-produto {
+    display: grid;
+    gap: 15px;
+}
+
+.grupo-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.rotulo {
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #555;
+}
+
+.campo-input {
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+.campo-input:focus {
+    border-color: #FF6B35;
+    box-shadow: 0 0 5px rgba(255, 107, 53, 0.5);
+    outline: none;
+}
+
+.botao-cadastro {
+    padding: 14px;
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.botao-cadastro:hover {
+    background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+    transform: translateY(-2px);
+}
+
+.link-voltar {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.link-voltar a {
+    color: #FF6B35;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link-voltar a:hover {
+    text-decoration: underline;
+}
+
+

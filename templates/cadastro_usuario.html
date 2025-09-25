@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuário</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='cadastro_usuario.css') }}">
+</head>
+<body>
+     
+    <div class="container-login">
+        <h2 class="titulo-principal">Cadastre-se</h2>
+        {% if error %}
+            <p class="mensagem-erro">{{ error }}</p>
+        {% endif %}
+        <form method="POST" action="{{ url_for('cadastro_usuario') }}">
+            
+            <div class="grupo-input">
+                <label for="nome" class="rotulo">Nome:</label>
+                <input type="text" id="nome'" name="nome" class="campo-input" placeholder="Insira seu nome" required>
+            </div>
+
+            <div class="grupo-input">
+                <label for="email" class="rotulo">Email:</label>
+                <input type="email" id="email" name="email" class="campo-input" placeholder="Insira seu email" required>
+            </div>
+
+            <div class="grupo-input">
+                <label for="senha" class="rotulo">Senha:</label>
+                <input type="password" id="senha" name="senha" class="campo-input" placeholder="Insira sua senha" required>
+            </div>
+           
+            <button type="submit" class="botao-login">Cadastrar</button>
+        </form>
+        <p class="link-cadastro">Já tem uma conta? <a href="{{ url_for('autenticacao') }}">Faça seu login</a></p>
+    </div>
+
+</body>
+</html>
+
+

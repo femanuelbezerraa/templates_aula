@@ -4,28 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autenticação de Usuário</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
 </head>
 <body>
-    
-    <div >
-        <h2>Login</h2>
+    <div class="container-login">
+        <h2 class="titulo-principal">Login</h2>
         {% if error %}
-            <p class="error">{{ error }}</p>
+            <p class="erro">{{ error }}</p>
         {% endif %}
         <form method="POST" action="{{ url_for('autenticacao') }}">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            
-            <label for="senha">Senha:</label>
-            <input type="password" id="senha" name="senha" required>
-            
-            <button type="submit">Entrar</button>
+            <div class="grupo-input">
+                <label for="email" class="rotulo">Email:</label>
+                <input type="email" id="email" name="email" class="campo-input" required>
+            </div>
+
+            <div class="grupo-input">
+                <label for="senha" class="rotulo">Senha:</label>
+                <input type="password" id="senha" name="senha" class="campo-input" required>
+            </div>
+           
+            <button type="submit" class="botao-login">Entrar</button>
         </form>
+        <p class="link-cadastro">Não tem uma conta? <a href="{{ url_for('cadastro_usuario') }}">Cadastre-se aqui!</a></p>
     </div>
-
-    <p> Não tem uma conta? <a href="{{ url_for('cadastro_usuario') }}">Cadastre-se aqui!</a></p>
-
 </body>
 </html>
+

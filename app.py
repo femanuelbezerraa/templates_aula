@@ -11,9 +11,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'uma_chave_muito_secreta'
 # Configuração para postgreSQL
 DB_USER = 'postgres'
-DB_PASSWORD = 'geleira@1'
+DB_PASSWORD = 'wcc@2023'
 DB_HOST = 'localhost'
-DB_NAME = 'py_estoque_3b'
+DB_NAME = 'py_estoque_3a'
 DB_PORT = '5433'
 # URL-encode a senha para garantir que caracteres especiais sejam tratados corretamente
 ENCODED_DB_PASSWORD = quote_plus(DB_PASSWORD)

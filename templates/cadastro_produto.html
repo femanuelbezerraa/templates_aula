@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Produto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='cadastro_produto.css') }}">
+</head>
+<body>
+    <div class="container-produto">
+        <h2 class="titulo-principal">Cadastro de Produto</h2>
+
+        <form method="POST" action="{{ url_for('cadastro_produto') }}" class="form-produto">
+            <div class="grupo-input">
+                <label for="nome" class="rotulo">Nome do Produto:</label>
+                <input type="text" id="nome" name="nome" class="campo-input" required>
+            </div>
+
+            <div class="grupo-input">
+                <label for="descricao" class="rotulo">Descrição:</label>
+                <textarea id="descricao" name="descricao" class="campo-input" rows="3"></textarea>
+            </div>
+
+            <div class="grupo-input">
+                <label for="quantidade" class="rotulo">Quantidade:</label>
+                <input type="number" id="quantidade" name="quantidade" class="campo-input" required>
+            </div>
+
+            <div class="grupo-input">
+                <label for="preco" class="rotulo">Preço:</label>
+                <input type="number" id="preco" name="preco" class="campo-input" required>
+            </div>
+
+            <div class="grupo-input">
+                <label for="quantidade_minima" class="rotulo">Quantidade Mínima:</label>
+                <input type="number" id="quantidade_minima" name="quantidade_minima" class="campo-input" required>
+            </div>
+
+            <button type="submit" class="botao-cadastro">Cadastrar Produto</button>
+        </form>
+
+        <p class="link-voltar"><a href="{{ url_for('logout') }}">Sair</a></p>
+    </div>
+</body>
+</html>
+
+
