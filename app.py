@@ -158,8 +158,8 @@ def saida_produto(produto_id):
 @app.route('/estoque')
 @login_required
 def estoque():
-    movimentacoes = query_db('SELECT * FORM movimentacao_estoque AS m JOIN usuarios AS u ON m.usario_id = u.id ORDER BY m.data_movimentacao DESC')
-    return render_template('estoque.html', movimentacoes=movimentacoes, usuario=session.get('usuario_nome'))
+    movimentacoes = query_db('SELECT * FROM movimentacao_estoque AS m JOIN usuarios AS u ON m.usuario_id = u.id ORDER BY m.data_movimentacao DESC')
+    return render_template('estoque.html', mov=movimentacoes, usuario=session.get('usuario_nome'))
 
 if __name__ == '__main__':
     app.run(debug=True)

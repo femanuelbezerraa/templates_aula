@@ -23,18 +23,18 @@
                     <th>Produto</th>
                     <th>Quantidade</th>
                     <th>Tipo de Movimentação</th>
-                    <th>Data e Hora</th>
+                    <th>Data</th>
                     <th>Usuário</th>
                 </tr>
             </thead>
             <tbody>
                 {% for movimentacao in movimentacoes%}
                 <tr>
-                    <td>{{ mov.produto_id}}</td>
-                    <td>{{ mov.tipo_movimentacao}}</td>
-                    <td>{{ mov.quantidade}}</td>
-                    <td>{{ mov.data_movimentacao}}</td>
-                    <td>{{ mov.nome}}</td>
+                    <td>{{ mov.produto_id }}</td>
+                    <td>{{ mov.tipo_movimentacao }}</td>
+                    <td>{{ mov.quantidade }}</td>
+                    <td>{{ mov.data_movimentacao }}</td>
+                    <td>{{ mov.nome }}</td>
                 </tr>
                 {% else %}
                 <tr>

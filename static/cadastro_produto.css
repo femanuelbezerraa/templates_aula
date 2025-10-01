@@ -93,10 +93,12 @@ body {
     text-align: center;
     margin-bottom: 20px;
     color: #333;
+    
 }
 
 .tabela-responsiva {
     overflow-x: auto;
+    box-shadow: #002b53 0px 4px 8px ;
 }
 
 /* Tabela */
