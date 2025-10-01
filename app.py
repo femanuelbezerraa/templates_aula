@@ -52,7 +52,7 @@ def execute_db(query, args=()):
     db.commit()
     # Retorna o ID do último registro inserido, útil para o SERIAL
     if cur.description:
-        last_id = cur.getchone()[0]
+        last_id = cur.fetchall()[0]
     else:
         last_id = None
     cur.close()
@@ -98,7 +98,7 @@ def cadastro_usuario():
         if usuario_existente:
             return render_template('cadastro_usuario.html', erro='E-mail já cadastrado')
         
-        senha_hash = generate_password_hash(senha, method='pbkf2:sha256')
+        senha_hash = generate_password_hash(senha, method='pbkdf2:sha256')
         execute_db('INSERT INTO usuarios (nome, email, senha) VALUES (%s, %s, %s)', (nome, email, senha_hash))
         return redirect(url_for('autenticacao'))
     return render_template('cadastro_usuario.html')
@@ -137,7 +137,7 @@ def cadastro_produto():
     
     # Ordenar os produtos com base na proximidade da quantidade mínima
     produtos = query_db('SELECT * FROM produtos ORDER BY quantidade - quantidade_minima')
-    return render_template('cadastro_produto.html', produtos=produtos, usuarios=usuario.get('usuario_nome'))
+    return render_template('cadastro_produto.html', produtos=produtos, usuarios=session.get('usuario_nome'))
 
 @app.route('/saida_produto/<int:produto_id>', methods=['POST'])
 @login_required

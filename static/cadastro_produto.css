@@ -9,33 +9,32 @@ body {
     background: linear-gradient(135deg, #002b53 0%, #536f9c 100%);
     min-height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    padding: 20px;
+    padding: 40px 20px;
+    color: #333;
 }
 
-.container-produto {
-    background: white;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    width: 100%;
-    max-width: 500px;
-    border: 2px solid transparent;
-    border-color: #e74c3c;
-}
-
+/* Título */
 .titulo-principal {
     text-align: center;
     margin-bottom: 20px;
-    color: #333;
-    font-size: 28px;
-    font-weight: 600;
+    color: white;
+    font-size: 30px;
+    font-weight: 700;
 }
 
+/* Formulário */
 .form-produto {
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     display: grid;
     gap: 15px;
+    margin-bottom: 40px;
 }
 
 .grupo-input {
@@ -80,19 +79,112 @@ body {
     transform: translateY(-2px);
 }
 
-.link-voltar {
-    text-align: center;
-    margin-top: 15px;
+/* Lista */
+.lista-container {
+    width: 100%;
+    max-width: 900px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-.link-voltar a {
-    color: #FF6B35;
-    text-decoration: none;
+.lista-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.tabela-responsiva {
+    overflow-x: auto;
+}
+
+/* Tabela */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #FF6B35;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Estoque baixo */
+.baixo-estoque {
+    background-color: #ffe5e5 !important;
+    color: #c0392b;
+    font-weight: bold;
+}
+
+/* Form da tabela */
+form input[type="number"] {
+    width: 70px;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    text-align: center;
+}
+
+form button {
+    margin-top: 5px;
+    padding: 6px 10px;
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+form button:hover {
+    background-color: #1c5980;
+}
+
+/* HEADER */
+.header {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    margin-bottom: 30px;
+}
+
+.header h2 {
+    font-size: 18px;
+    color: #333;
     font-weight: 600;
 }
 
-.link-voltar a:hover {
-    text-decoration: underline;
+.nav-links {
+    display: flex;
+    gap: 20px;
 }
 
+.nav-links a {
+    text-decoration: none;
+    color: #FF6B35;
+    font-weight: 600;
+    transition: 0.3s;
+}
 
+.nav-links a:hover {
+    color: #FF8C42;
+}

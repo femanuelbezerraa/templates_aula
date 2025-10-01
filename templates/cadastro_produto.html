@@ -1,47 +1,89 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Produto</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='cadastro_produto.css') }}">
 </head>
+
 <body>
-    <div class="container-produto">
-        <h2 class="titulo-principal">Cadastro de Produto</h2>
+    
+    <div class="header">
+        <h2>Olá, {{ usuario }}</h2>
+        <div class="nav-links">
+            <a href="{{ url_for('estoque') }}">Movimentação de Estoque</a>
+            <a href="{{ url_for('logout') }}">Sair</a>
+        </div>
+    </div>
 
-        <form method="POST" action="{{ url_for('cadastro_produto') }}" class="form-produto">
-            <div class="grupo-input">
-                <label for="nome" class="rotulo">Nome do Produto:</label>
-                <input type="text" id="nome" name="nome" class="campo-input" required>
-            </div>
+    
+    <h1 class="titulo-principal">Cadastro de Produto</h1>
 
-            <div class="grupo-input">
-                <label for="descricao" class="rotulo">Descrição:</label>
-                <textarea id="descricao" name="descricao" class="campo-input" rows="3"></textarea>
-            </div>
+    
+    <form class="form-produto" action="{{ url_for('cadastro_produto') }}" method="POST">
 
-            <div class="grupo-input">
-                <label for="quantidade" class="rotulo">Quantidade:</label>
-                <input type="number" id="quantidade" name="quantidade" class="campo-input" required>
-            </div>
+        <div class="grupo-input">
+            <label class="rotulo">Nome</label>
+            <input class="campo-input" type="text" name="nome" required>
+        </div>
+        <div class="grupo-input">
+            <label class="rotulo">Descrição</label>
+            <input class="campo-input" type="text" name="descricao" required>
+        </div>
+        <div class="grupo-input">
+            <label class="rotulo">Quantidade</label>
+            <input class="campo-input" type="number" name="quantidade" required>
+        </div>
+        <div class="grupo-input">
+            <label class="rotulo">Preço</label>
+            <input class="campo-input" type="number" step="0.01" name="preco" required>
+        </div>
+        <div class="grupo-input">
+            <label class="rotulo">Quantidade mínima</label>
+            <input class="campo-input" type="number" name="quantidade_minima" value="1" min="1" required>
+        </div>
+        <button class="botao-cadastro" type="submit">Cadastrar Produto</button>
+    </form>
 
-            <div class="grupo-input">
-                <label for="preco" class="rotulo">Preço:</label>
-                <input type="number" id="preco" name="preco" class="campo-input" required>
-            </div>
-
-            <div class="grupo-input">
-                <label for="quantidade_minima" class="rotulo">Quantidade Mínima:</label>
-                <input type="number" id="quantidade_minima" name="quantidade_minima" class="campo-input" required>
-            </div>
-
-            <button type="submit" class="botao-cadastro">Cadastrar Produto</button>
-        </form>
-
-        <p class="link-voltar"><a href="{{ url_for('logout') }}">Sair</a></p>
+    
+    <div class="lista-container">
+        <h2>Listar Produtos</h2>
+        <div class="tabela-responsiva">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Quantidade</th>
+                        <th>Preço</th>
+                        <th>Quantidade Mínima</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produto in produtos %}
+                    <tr class="{% if produto.quantidade < produto.quantidade_minima %}baixo-estoque{% endif %}">
+                        <td>{{ produto.nome }}</td>
+                        <td>{{ produto.descricao }}</td>
+                        <td>{{ produto.quantidade }}</td>
+                        <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
+                        <td>{{ produto.quantidade_minima }}</td>
+                        <td>
+                            <form action="{{ url_for('saida_produto', produto_id=produto.id) }}" method="POST">
+                                <input type="number" name="quantidade_saida" min="1" max="{{ produto.quantidade }}" required>
+                                <button type="submit">Registrar Saída</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6">Nenhum produto cadastrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 </html>
-
-
