@@ -1,0 +1,166 @@
+/* Reset + Fonte */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Fundo */
+body {
+    background: linear-gradient(135deg, #002b53 0%, #536f9c 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    color: #333;
+}
+
+/* Container menor e centralizado */
+.container {
+    width: 100%;
+    max-width: 950px; /* menor que antes */
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+    overflow: auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    transition: color 0.3s;
+}
+
+.header h1:hover {
+    color: #FF6B35;
+}
+
+.nav-links {
+    display: flex;
+    gap: 16px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #FF6B35;
+    font-weight: 600;
+    transition: color 0.3s, transform 0.2s;
+}
+
+.nav-links a:hover {
+    color: #FF8C42;
+    transform: scale(1.05);
+}
+
+/* Título */
+h2 {
+    text-align: center;
+    margin-bottom: 18px;
+    color: #333;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: color 0.3s, transform 0.2s;
+}
+
+h2:hover {
+    color: #FF6B35;
+    transform: scale(1.03);
+}
+
+/* Tabela */
+table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+/* Cabeçalho */
+thead th {
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+    color: white;
+    padding: 14px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    transition: background 0.3s;
+}
+
+thead th:hover {
+    background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+}
+
+/* Corpo da tabela */
+tbody td {
+    border: 1px solid #eee;
+    padding: 12px;
+    text-align: center;
+    font-size: 14px;
+    color: #444;
+    transition: background 0.3s, transform 0.2s;
+}
+
+/* Linhas alternadas */
+tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+/* Hover nas linhas */
+tbody tr:hover td {
+    background: #f1f6fb;
+    transform: scale(1.01);
+}
+
+/* Nenhum dado */
+tbody tr td[colspan] {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+    font-style: italic;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 18px;
+    }
+
+    .header h1 { font-size: 18px; }
+    h2 { font-size: 20px; }
+
+    table { min-width: 750px; }
+}
+
+@media (max-width: 480px) {
+    .nav-links { gap: 10px; }
+    .nav-links a { font-size: 13px; }
+    table { min-width: 700px; }
+}

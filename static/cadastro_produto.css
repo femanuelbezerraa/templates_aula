@@ -190,3 +190,9 @@ form button:hover {
 .nav-links a:hover {
     color: #FF8C42;
 }
+
+a {
+    text-decoration: none;
+    color: white;
+    
+}

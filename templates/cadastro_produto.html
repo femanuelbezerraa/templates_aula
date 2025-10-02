@@ -70,9 +70,10 @@
                         <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
                         <td>{{ produto.quantidade_minima }}</td>
                         <td>
-                            <form action="{{ url_for('saida_produto', produto_id=produto.id) }}" method="POST">
+                            <form action="{{ url_for('saida_produto', produto_id=produto.id) }}" method="POST" style="display:inline-block;">
                                 <input type="number" name="quantidade_saida" min="1" max="{{ produto.quantidade }}" required>
-                                <button type="submit">Registrar Saída</button>
+                                <button type="submit">Saída</button>
+                                <button type="submit"><a href="{{ url_for('editar_produto') }}?id={{ produto.id }}" class="botao-editar">Editar</a></button>
                             </form>
                         </td>
                     </tr>

@@ -30,19 +30,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for movimentacao in movimentacoes%}
+                {% for movimentacao in movimentacoes %}
                 <tr>
                     <td>{{ movimentacao.produto_id }}</td>
                     <td>{{ movimentacao.nome_produto }}</td>
-                    <td>{{ movimentacao.tipo_movimentacao }}</td>
                     <td>{{ movimentacao.quantidade }}</td>
+                    <td>{{ movimentacao.tipo_movimentacao }}</td>
                     <td>{{ movimentacao.data_movimentacao }}</td>
                     <td>{{ movimentacao.nome }}</td>
                     <td>{{ movimentacao.usuario_id }}</td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5">Nenhuma movimentação encontrada.</td>
+                    <td colspan="7">Nenhuma movimentação encontrada.</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -155,6 +155,25 @@ def saida_produto(produto_id):
     
     return redirect(url_for('cadastro_produto'))
 
+@app.route('/editar', methods=['GET', 'POST'])
+@login_required
+def editar_produto():
+    if request.method == 'POST':
+        produto_id = request.form['id']
+        nome = request.form['nome']
+        descricao = request.form.get('descricao', '')
+        quantidade = request.form['quantidade']
+        quantidade_minima = request.form.get('quantidade_minima', 1)
+        preco = request.form.get('preco', 0)
+        execute_db('''UPDATE produtos SET nome=%s, descricao=%s, quantidade=%s, quantidade_minima=%s, preco=%s WHERE id=%s''',
+                   (nome, descricao, quantidade, quantidade_minima, preco, produto_id))
+        return redirect(url_for('cadastro_produto'))
+    else:
+        produto_id = request.args.get('id')
+        produto = query_db('SELECT * FROM produtos WHERE id = %s', (produto_id,), one=True)
+        if not produto:
+            return "Produto não encontrado", 404
+        return render_template('editar_produto.html', produto=produto, usuario=session.get('usuario_nome')) 
 @app.route('/estoque')
 @login_required
 def estoque():
@@ -168,4 +187,4 @@ def estoque():
     return render_template('estoque.html', movimentacoes=movimentacoes, usuario=session.get('usuario_nome'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True) 

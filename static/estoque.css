@@ -1,4 +1,4 @@
-
+/* Reset + Fonte */
 * {
     margin: 0;
     padding: 0;
@@ -6,6 +6,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Fundo */
 body {
     background: linear-gradient(135deg, #002b53 0%, #536f9c 100%);
     min-height: 100vh;
@@ -15,16 +16,17 @@ body {
     color: #333;
 }
 
+/* Container */
 .container {
     width: 100%;
-    max-width: 1000px;
+    max-width: 1100px;
     background: white;
     padding: 30px;
     border-radius: 14px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-
+/* HEADER */
 .header {
     width: 100%;
     display: flex;
@@ -59,7 +61,7 @@ body {
     color: #FF8C42;
 }
 
-
+/* Título */
 h2 {
     text-align: center;
     margin-bottom: 20px;
@@ -68,16 +70,17 @@ h2 {
     font-weight: 700;
 }
 
-
+/* Tabela */
 table {
     width: 100%;
     border-collapse: collapse;
     background-color: #fff;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 6px 18px rgba(0,0,0,0.1);
 }
 
+/* Cabeçalho */
 thead th {
     background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
     color: white;
@@ -86,6 +89,7 @@ thead th {
     text-align: center;
 }
 
+/* Corpo da tabela */
 tbody td {
     border: 1px solid #ddd;
     padding: 12px;
@@ -94,18 +98,20 @@ tbody td {
     color: #444;
 }
 
+/* Linhas alternadas */
 tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-
-tbody tr td[colspan="5"] {
+/* Nenhum dado */
+tbody tr td[colspan] {
     text-align: center;
     padding: 20px;
     color: #777;
     font-style: italic;
 }
 
+/* Hover nas linhas */
 tbody tr:hover {
     background-color: #f1f1f1;
     transition: 0.3s;
